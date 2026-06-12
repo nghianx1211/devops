@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: devops_training_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: devops_training
+      POSTGRES_USER: devops_user
+      POSTGRES_PASSWORD: devops_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devops_user -d devops_training"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
